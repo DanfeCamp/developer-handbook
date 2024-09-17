@@ -17,14 +17,7 @@ This handbook is a comprehensive resource for web developers. It covers a range 
 
 ## 🤝🏻 How to Contribute
 
-We welcome contributions to enhance this handbook. Here’s how you can get involved:
-
-1. Discuss your ideas with the community or maintainers.
-2. Create a Google Doc with your proposed content.
-3. Write content in clear and concise language.
-4. Submit your draft for review.
-5. Convert approved content to Markdown format.
-6. Create a new branch in the GitHub repository, raise a pull request, and tag reviewers.
+We encourage you to help improve this handbook. For detailed guidelines on contributing, please check the [WORKFLOW](https://github.com/DanfeCamp/engineering-handbook/blob/main/WORKFLOW.md) file.
 
 ### 🧩 Branch Creation and Usage
 

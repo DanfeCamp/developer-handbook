@@ -1,0 +1,42 @@
+title: "Add documentation for a new technology"
+labels: ["add documentation for a new technology"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please fill out the information below to suggest a new topic for the engineering handbook. If any section does not apply, feel free to use "NA".
+  - type: input
+    attributes:
+      label: Topic Title
+      description: Provide a title for the new topic.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Description
+      description: Describe the topic and what it covers.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Why This Topic?
+      description: Explain why this topic is important and why it should be included in the handbook.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: References or Resources
+      description: Provide any references, links, or resources related to the topic.
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Tags
+      description: Provide relevant tags (e.g., Git, npm, React) to categorize the topic.
+      value: |
+        1. 
+        2. 
+        3. 
+        ...
+    validations:
+      required: false

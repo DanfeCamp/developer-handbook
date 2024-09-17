@@ -8,7 +8,7 @@ import {themes as prismThemes} from 'prism-react-renderer';
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'Engineering Handbook',
+  title: 'Developer Handbook',
   tagline: '',
   favicon: 'img/favicon.ico',
 
@@ -21,7 +21,7 @@ const config = {
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: 'DanfeCamp', // Usually your GitHub org/user name.
-  projectName: 'engineering-handbook', // Usually your repo name.
+  projectName: 'developer-handbook', // Usually your repo name.
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
@@ -40,13 +40,13 @@ const config = {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
-          path: 'engineering-handbook',
+          path: 'developer-handbook',
           routeBasePath: '/',
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           // editUrl: ({ docPath }) => {
-          //   return `https://github.com/DanfeCamp/engineering-handbook/edit/main/engineering-handbook/${docPath}`;
+          //   return `https://github.com/DanfeCamp/developer-handbook/edit/main/developer-handbook/${docPath}`;
           // },
         },
         blog: false,
@@ -70,9 +70,9 @@ const config = {
       },
       navbar: {
         hideOnScroll: true,
-        title: 'Engineering Handbook',
+        title: 'Developer Handbook',
         logo: {
-          alt: 'Engineering Handbook',
+          alt: 'Developer Handbook',
           src: 'img/logo.svg',
           srcDark: 'img/logo.svg',
           href: 'https://learn.danfecamp.com',

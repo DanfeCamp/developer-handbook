@@ -4,7 +4,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Please fill out the information below to suggest a new topic for the engineering handbook. If any section does not apply, feel free to use "NA".
+        Please fill out the information below to suggest a new topic for the developer handbook. If any section does not apply, feel free to use "NA".
   - type: input
     attributes:
       label: Topic Title

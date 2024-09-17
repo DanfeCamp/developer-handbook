@@ -1,6 +1,6 @@
-# Engineering Handbook
+# Developer Handbook
 
-Welcome to the Engineering Handbook for Web Developers! This guide is designed to equip you with the knowledge, processes, and best practices needed to excel in web development.
+Welcome to the Developer Handbook! This guide is designed to equip you with the knowledge, processes, and best practices needed to excel in web development.
 
 ### 🎯 Purpose and Scope
 
@@ -17,7 +17,7 @@ This handbook is a comprehensive resource for web developers. It covers a range 
 
 ## 🤝🏻 How to Contribute
 
-We encourage you to help improve this handbook. For detailed guidelines on contributing, please check the [WORKFLOW](https://github.com/DanfeCamp/engineering-handbook/blob/main/WORKFLOW.md) file.
+We encourage you to help improve this handbook. For detailed guidelines on contributing, please check the [WORKFLOW](https://github.com/DanfeCamp/developer-handbook/blob/main/WORKFLOW.md) file.
 
 ### 🧩 Branch Creation and Usage
 
@@ -43,13 +43,13 @@ To contribute to the handbook locally, follow these steps:
 ##### 1. Clone the Repository:
 
 ```Bash
-git clone https://github.com/DanfeCamp/engineering-handbook.git
+git clone https://github.com/DanfeCamp/developer-handbook.git
 ```
 
 ##### 2. Install Dependencies:
 
 ```Bash
-cd engineering-handbook
+cd developer-handbook
 npm install
 ```
 

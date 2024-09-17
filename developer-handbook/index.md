@@ -5,6 +5,8 @@ slug: /
 sidebar_position: 1
 ---
 
+# Introduction
+
 ### Welcome, Developers! 👋
 
 This handbook is your go-to resource for navigating web development workflows, best practices, and essential tools. Whether you’re new to coding or seeking to refresh your skills, this guide is here to support your success.

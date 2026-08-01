@@ -35,7 +35,7 @@ To contribute to the handbook locally, follow these steps:
 
 #### Prerequisites
 
-- Node.js (20 or higher)
+- Node.js (22 or higher)
 - NPM (10 or higher)
 
 #### Steps

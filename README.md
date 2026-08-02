@@ -92,3 +92,4 @@ Run `npm run validate` before opening a pull request — CI runs the same checks
 ## 📐 Let's Build Together!
 
 This handbook is a living document, evolving to reflect the latest developments in web technology and best practices. Your contributions are vital in making it a valuable resource for the web development community. Let’s work together to create a handbook that supports developers everywhere!
+

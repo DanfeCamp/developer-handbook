@@ -1,0 +1,8 @@
+{
+  "label": "Testing",
+  "position": 8,
+  "collapsed": true,
+  "customProps": {
+    "description": "Testing strategies and terminology, from black box and white box through to smoke testing."
+  }
+}

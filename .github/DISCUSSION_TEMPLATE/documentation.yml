@@ -1,5 +1,5 @@
-title: "Add documentation for a new technology"
-labels: ["documentation"]
+title: 'Add documentation for a new technology'
+labels: ['documentation']
 body:
   - type: markdown
     attributes:

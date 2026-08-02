@@ -24,19 +24,19 @@ We welcome contributions to improve this handbook. Follow the steps below to get
    ```
 
 6. **Open a Pull Request**
-    - Push your changes to your branch and open a pull request (PR) in the GitHub repository. Provide a clear description of your changes and tag relevant reviewers.
+   - Push your changes to your branch and open a pull request (PR) in the GitHub repository. Provide a clear description of your changes and tag relevant reviewers.
 
-    ```bash
-    git add .
-    git commit -m "Add new content on [topic]"
-    git push origin <branch-name>
-    ```
+   ```bash
+   git add .
+   git commit -m "Add new content on [topic]"
+   git push origin <branch-name>
+   ```
 
 7. **Address Feedback**
-    - Reviewers will provide feedback on your PR. Make necessary adjustments and respond to comments as needed.
+   - Reviewers will provide feedback on your PR. Make necessary adjustments and respond to comments as needed.
 
 8. **Merge Your Changes**
-    - Once your PR is reviewed and approved, it will be merged into the main branch by a maintainer or through automated workflows.
+   - Once your PR is reviewed and approved, it will be merged into the main branch by a maintainer or through automated workflows.
 
 ## Tips for Successful Contributions
 

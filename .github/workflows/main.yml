@@ -12,21 +12,29 @@ jobs:
 
     steps:
       - name: 🚚 Get latest code
-        uses: actions/checkout@v3
+        # Full history so Docusaurus can infer each page's last update date.
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
       - name: 📦 Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v7
         with:
-          node-version: '20' # Specify the Node.js version
+          node-version: '22' # Active Node.js LTS
+          cache: 'npm'
 
       - name: 🛠️ Install dependencies
-        run: npm install
+        # `npm ci` installs exactly what the lockfile pins, unlike `npm install`.
+        run: npm ci
+
+      - name: 🔍 Validate
+        run: npm run typecheck && npm run lint && npm run format:check
 
       - name: 📄 Build static files
         run: npm run build # 'build' script generates static files in 'build' directory
 
       - name: 📂 Sync files
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
         with:
           server: ${{ secrets.ftp_server }}
           username: ${{ secrets.ftp_username }}

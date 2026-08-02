@@ -1,0 +1,7 @@
+.docusaurus/
+build/
+node_modules/
+package-lock.json
+static/
+CODE_OF_CONDUCT.md
+LICENSE

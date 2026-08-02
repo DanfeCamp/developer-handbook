@@ -35,8 +35,8 @@ To contribute to the handbook locally, follow these steps:
 
 #### Prerequisites
 
-- Node.js (20 or higher)
-- NPM (10 or higher)
+- Node.js (20 or higher; 22 LTS recommended)
+- npm (10 or higher)
 
 #### Steps
 
@@ -63,7 +63,31 @@ This will start a local development server, and you should be able to view the h
 
 #### Making Changes
 
-Edit the Markdown files in the `handbook` directory to make your changes. The development server will automatically reload, and you'll see your changes reflected in the browser.
+Edit the Markdown files in the `developer-handbook` directory to make your
+changes. The development server will automatically reload, and you'll see your
+changes reflected in the browser.
+
+Content is organised into two sections:
+
+- `developer-handbook/course/` — guided, ordered lessons.
+- `developer-handbook/knowledge-base/` — reference material for quick lookups.
+
+Sidebar labels and ordering are controlled by the `_category_.json` file in each
+directory, so navigation stays next to the content it describes.
+
+#### Available Scripts
+
+| Script              | Purpose                                          |
+| ------------------- | ------------------------------------------------ |
+| `npm start`         | Start the local development server.              |
+| `npm run build`     | Build the production site into `build/`.         |
+| `npm run serve`     | Serve a production build locally.                |
+| `npm run typecheck` | Type-check the project with TypeScript.          |
+| `npm run lint`      | Lint with ESLint (`lint:fix` to autofix).        |
+| `npm run format`    | Format with Prettier (`format:check` to verify). |
+| `npm run validate`  | Run typecheck, lint, format check and build.     |
+
+Run `npm run validate` before opening a pull request — CI runs the same checks.
 
 ## 📐 Let's Build Together!
 

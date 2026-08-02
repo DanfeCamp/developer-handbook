@@ -1,0 +1,8 @@
+{
+  "label": "DOM",
+  "position": 5,
+  "collapsed": true,
+  "customProps": {
+    "description": "How the browser represents a document in memory, and how scripts interact with it."
+  }
+}

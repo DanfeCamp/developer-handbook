@@ -12,7 +12,9 @@ max_line_length = 80
 trim_trailing_whitespace = true
 
 [*.md]
-insert_final_newline = false
+# Prettier always writes a final newline; keep EditorConfig in agreement.
+insert_final_newline = true
+# Markdown uses two trailing spaces as a hard line break.
 trim_trailing_whitespace = false
 
 [*.js]

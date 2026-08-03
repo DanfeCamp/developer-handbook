@@ -67,13 +67,18 @@ Edit the Markdown files in the `developer-handbook` directory to make your
 changes. The development server will automatically reload, and you'll see your
 changes reflected in the browser.
 
-Content is organised into two sections:
+All content lives under `developer-handbook/knowledge-base/`, one directory per
+topic. Directory names are part of the published URL, so they are left alone
+even when a topic moves to a different part of the navigation.
 
-- `developer-handbook/course/` — guided, ordered lessons.
-- `developer-handbook/knowledge-base/` — reference material for quick lookups.
-
-Sidebar labels and ordering are controlled by the `_category_.json` file in each
-directory, so navigation stays next to the content it describes.
+Navigation is defined explicitly in `sidebars.ts` rather than generated from the
+filesystem. Topics are grouped into eleven sections — Fundamentals, Developer
+Tools, Frontend, Backend, Databases, APIs, Architecture, Security, Web
+Essentials, Hosting & Deployment, Operations — and ordered for learning rather
+than alphabetically. This is why a topic's directory and its place in the
+sidebar do not always match. **A new page must be added to `sidebars.ts` to
+appear in the navigation** — the build warns if a doc is missing from the
+sidebar.
 
 #### Available Scripts
 
@@ -92,4 +97,3 @@ Run `npm run validate` before opening a pull request — CI runs the same checks
 ## 📐 Let's Build Together!
 
 This handbook is a living document, evolving to reflect the latest developments in web technology and best practices. Your contributions are vital in making it a valuable resource for the web development community. Let’s work together to create a handbook that supports developers everywhere!
-

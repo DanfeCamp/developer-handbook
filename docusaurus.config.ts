@@ -131,8 +131,8 @@ const config: Config = {
           title: 'Learn',
           items: [
             {label: 'Introduction', to: '/'},
-            {label: 'Course', to: '/course'},
-            {label: 'Knowledge Base', to: '/knowledge-base'},
+            {label: 'All Topics', to: '/knowledge-base'},
+            {label: 'Fundamentals', to: '/knowledge-base/fundamentals'},
           ],
         },
         {

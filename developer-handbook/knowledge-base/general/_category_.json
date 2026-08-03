@@ -1,8 +1,0 @@
-{
-  "label": "General Concepts",
-  "position": 1,
-  "collapsed": true,
-  "customProps": {
-    "description": "Cross-cutting software engineering concepts that apply across languages and frameworks."
-  }
-}

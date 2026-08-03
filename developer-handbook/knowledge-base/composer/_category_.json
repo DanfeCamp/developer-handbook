@@ -1,8 +1,0 @@
-{
-  "label": "Composer",
-  "position": 4,
-  "collapsed": true,
-  "customProps": {
-    "description": "Dependency management for PHP: key concepts and the commands you use day to day."
-  }
-}

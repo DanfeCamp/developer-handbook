@@ -1,7 +1,7 @@
 ---
 id: introduction
 title: Introduction
-description: A practical, self-contained reference for modern software development — workflows, best practices, tools and guided courses.
+description: A practical, self-contained reference for modern software development — workflows, best practices, tools and production concerns.
 slug: /
 sidebar_position: 1
 ---
@@ -23,31 +23,47 @@ refresh your skills, this guide is here to support your success.
 
 ### How this handbook is organised
 
-The handbook is split into two complementary sections. Courses take you through
-a topic in a deliberate order; the knowledge base is there for the moment you
-need one specific answer.
+Topics are grouped into eleven sections, ordered along the life of a project:
+what you need to know, what you build with, how you design it, and how you ship
+and run it. Within each section, pages are ordered the way you would learn them
+— concepts first, then commands, then practices, then the mistakes people make.
 
 ```mermaid
-flowchart TD
-    H[Developer Handbook] --> C[Course]
-    H --> K[Knowledge Base]
+flowchart LR
+    H[Developer Handbook] --> A[Know]
+    H --> B[Build]
+    H --> C[Design]
+    H --> D[Ship and run]
 
-    C --> C1[Guided, ordered lessons]
-    C --> C2[Learn a platform end to end]
+    A --> A1[Fundamentals]
+    A --> A2[Developer Tools]
 
-    K --> K1[Reference material]
-    K --> K2[Best practices and common mistakes]
-    K --> K3[Look up one answer, fast]
+    B --> B1[Frontend]
+    B --> B2[Backend]
+    B --> B3[Databases]
+    B --> B4[APIs]
+
+    C --> C1[Architecture]
+    C --> C2[Security]
+    C --> C3[Web Essentials]
+
+    D --> D1[Hosting and Deployment]
+    D --> D2[Operations]
 ```
+
+Every page is meant to stand on its own: the explanation lives on the page, and
+external links belong under _References_ rather than as a substitute for one.
 
 ### Where to start
 
-- **Learning a platform from scratch?** Begin with the [Course](/course) section
-  and work through the lessons in order.
-- **Looking for a specific answer?** Search with <kbd>Ctrl</kbd> + <kbd>K</kbd>,
-  or browse the [Knowledge Base](/knowledge-base).
+- **Want the full map?** Browse [All Topics](/knowledge-base) for every section
+  at a glance.
+- **Looking for a specific answer?** Search with <kbd>Ctrl</kbd> + <kbd>K</kbd>
+  — it indexes the full text of every page.
 - **New to version control?** [Git](/knowledge-base/git) is the foundation most
   other workflows build on.
+- **Building a UI?** [React](/knowledge-base/react-js) and
+  [Next.js](/knowledge-base/next-js) are the most developed sections here.
 
 We hope this handbook becomes a valuable companion on your development journey.
 Explore the sections to get the most out of our development practices and

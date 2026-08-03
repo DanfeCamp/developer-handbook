@@ -1,8 +1,0 @@
-{
-  "label": "Next.js",
-  "position": 7,
-  "collapsed": true,
-  "customProps": {
-    "description": "Rendering strategies, API routes, folder structure, SEO and production best practices."
-  }
-}

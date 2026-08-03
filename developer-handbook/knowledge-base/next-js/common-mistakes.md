@@ -1,9 +1,22 @@
 ---
 id: common-mistakes
 title: Common Mistakes
+description: The App Router mistakes that cost the most time — client boundaries, fetch waterfalls, stale caches, leaked secrets — with the fix for each.
 ---
 
 # Common Mistakes
+
+Almost every mistake here comes from the same root: the App Router runs your
+code in **two places**, and it is easy to lose track of which one you are in.
+
+:::tip Three questions that prevent most of them
+
+1. **Where does this run?** Server Component, Client Component, or both during
+   hydration.
+2. **When does this run?** Build time, request time, or in the browser.
+3. **What is cached, and what invalidates it?** Explicit is always better than
+   discovering it in production.
+   :::
 
 ## Using the "use client" Directive Too High in the Component Tree
 
@@ -379,3 +392,185 @@ export default async function Product() {
 ```
 
 In this approach, the `redirect` function is placed outside the `try` block. By doing so, any errors thrown by `redirect` will not be caught by the `catch` block, allowing the redirect to proceed as intended. This ensures that the user is properly redirected to the `/create-product` page if the `product` is not found. Separating the `redirect` logic from the `try-catch` block provides clearer and more predictable error handling and navigation.
+
+The same applies to `notFound()`, which works by throwing in exactly the same
+way.
+
+---
+
+## Two More Worth Knowing
+
+### Forgetting that request APIs are asynchronous
+
+Next.js 15 made `params`, `searchParams`, `cookies()` and `headers()` return
+promises. The failure is quiet — you get `undefined` rather than an error:
+
+```tsx
+// ❌ Next.js 14 and earlier
+export default function Page({params}: {params: {slug: string}}) {
+  return <h1>{params.slug}</h1>; // undefined
+}
+
+// ✅
+export default async function Page({params}: {params: Promise<{slug: string}>}) {
+  const {slug} = await params;
+  return <h1>{slug}</h1>;
+}
+```
+
+This is the single most common Next.js 14 → 16 upgrade break.
+
+### Treating a Server Action as private
+
+`'use server'` creates a **public HTTP endpoint**. The form is not a gate —
+anyone can invoke the action directly with any arguments they like.
+
+```ts
+'use server';
+
+export async function deleteOrder(id: string) {
+  // ❌ No checks: any caller can delete any order.
+  await db.order.delete({where: {id}});
+}
+```
+
+```ts
+'use server';
+
+export async function deleteOrder(id: string) {
+  const session = await auth(); //         who are you?
+  if (!session) throw new Error('Unauthorized');
+
+  const order = await db.order.findUnique({where: {id}});
+  if (order?.userId !== session.user.id) {
+    // may you touch this one?
+    throw new Error('Not found');
+  }
+
+  await db.order.delete({where: {id}});
+  revalidateTag('orders');
+}
+```
+
+Authenticate **and** authorise inside every action, exactly as you would in a
+[Route Handler](/knowledge-base/next-js/api-routes#authentication).
+
+---
+
+## Check your understanding
+
+<Quiz
+question="A layout at app/(app)/layout.tsx starts with 'use client' so it can use a theme toggle. What is the consequence?"
+options={[
+{
+text: 'Every component rendered inside that layout becomes part of the client bundle, so the whole section loses Server Component benefits',
+correct: true,
+why: "'use client' marks a boundary, not a single file. Everything imported below it is client code — no direct database access, no server-only dependencies, and a much larger bundle.",
+},
+{
+text: 'Only the layout itself becomes a Client Component; children are unaffected',
+why: 'Children rendered by a Client Component are also client code. The exception is content passed as children from a Server Component parent.',
+},
+{
+text: 'Nothing — layouts are always rendered on the server regardless',
+why: 'A layout with the directive is a Client Component like any other.',
+},
+{
+text: 'Metadata exports continue to work as normal',
+why: 'They are ignored in Client Components — a second casualty of putting the directive too high.',
+},
+]}
+explanation={<>Keep the layout a Server Component and extract the toggle into its own <code>'use client'</code> leaf. Content can still be passed through as <code>children</code> and stay server-rendered.</>}
+reference={{label: 'use client too high', href: '/knowledge-base/next-js/common-mistakes#using-the-use-client-directive-too-high-in-the-component-tree'}}
+/>
+
+<Quiz
+question="A page awaits three independent data fetches in sequence and takes 900 ms. Each fetch takes about 300 ms. What is the fix?"
+options={[
+{
+text: 'Start all three and await them together with Promise.all, so they run in parallel',
+correct: true,
+why: 'Sequential awaits create a waterfall: each request waits for the previous to resolve even though none depends on the others. In parallel the page waits for the slowest, roughly 300 ms.',
+},
+{text: 'Move the fetches into a Client Component with useEffect', why: 'That adds a round trip after hydration and makes it slower, not faster.'},
+{text: 'Add a loading.tsx file', why: 'Improves perceived performance by showing a fallback, but the data still takes 900 ms to arrive.'},
+{text: 'Cache each fetch with use cache', why: 'Helps on subsequent requests; the first uncached request still waterfalls.'},
+]}
+explanation={<>Sequential awaits are only correct when a later request genuinely needs an earlier result. Otherwise start them together. Suspense boundaries let independently slow sections stream in without blocking the shell.</>}
+reference={{label: 'Waterfall effect', href: '/knowledge-base/next-js/common-mistakes#getting-a-waterfall-effect-when-fetching-data'}}
+/>
+
+<Quiz
+question="Which of these correctly keep a secret out of the browser bundle?"
+type="multiple"
+options={[
+{text: 'Read process.env.DATABASE_URL only inside a Server Component or Route Handler', correct: true, why: 'Variables without the NEXT_PUBLIC_ prefix are server-only, provided the module is never imported into client code.'},
+{text: 'Add import "server-only" at the top of the module holding the secret', correct: true, why: 'Turns an accidental client import into a build error rather than a silent leak.'},
+{text: 'Access it in a Server Action', correct: true, why: 'Server Actions execute on the server; the code is never sent to the browser.'},
+{text: 'Prefix it NEXT_PUBLIC_ so Next.js manages it properly', why: 'The opposite: that prefix explicitly inlines the value into the client bundle.'},
+{text: 'Store it in a Client Component but never render it', why: 'Anything imported by client code ships to the browser, rendered or not. It is readable in the bundle.'},
+]}
+explanation={<>The <code>server-only</code> package is the highest-value line here: it converts a class of invisible leak into a loud build failure.</>}
+reference={{label: 'Hardcoding secrets', href: '/knowledge-base/next-js/common-mistakes#hardcoding-secrets'}}
+/>
+
+<Quiz
+question="After a Server Action creates a record, the list page still shows the old data until a hard refresh. Why?"
+options={[
+{
+text: 'The cached route was not invalidated — the action needs revalidatePath or revalidateTag',
+correct: true,
+why: 'Next.js caches rendered output and data. A mutation must explicitly tell the framework what is now stale, otherwise the cached version continues to be served.',
+},
+{text: 'Server Actions cannot modify data that a page reads', why: 'They can and routinely do; the missing piece is cache invalidation.'},
+{text: 'The page needs export const dynamic = "force-dynamic"', why: 'It would work by disabling caching entirely — throwing away the performance benefit rather than invalidating precisely.'},
+{text: 'router.refresh() must be called from the server', why: 'router.refresh() is a client API, and targeted revalidation is the better tool here.'},
+]}
+explanation={<>Prefer <code>revalidateTag</code> over <code>revalidatePath</code> where you can: tags let one mutation invalidate exactly the data it affected, across whichever routes happen to use it.</>}
+reference={{label: 'Page not reflecting data mutation', href: '/knowledge-base/next-js/common-mistakes#page-not-reflecting-data-mutation'}}
+/>
+
+<Quiz
+question="This Server Component throws 'NEXT_REDIRECT' and renders an error page instead of redirecting. What is wrong?"
+options={[
+{
+text: 'redirect() works by throwing a special error, and the try/catch swallows it',
+correct: true,
+why: 'Both redirect() and notFound() signal by throwing. Catching that error stops Next.js seeing the signal, so it is handled as an ordinary failure.',
+},
+{text: 'redirect() cannot be used in a Server Component', why: 'It is designed for exactly this. The problem is the surrounding try/catch.'},
+{text: 'The redirect target must be an absolute URL', why: 'Relative paths are supported and idiomatic.'},
+{text: 'redirect() must be awaited', why: 'It does not return a promise; it throws.'},
+]}
+explanation={<>Call <code>redirect()</code> and <code>notFound()</code> <em>after</em> the try/catch, using its result to decide. If you must catch broadly, re-throw anything matching Next.js's internal error signals.</>}
+reference={{label: 'Using redirect in try/catch', href: '/knowledge-base/next-js/common-mistakes#using-redirect-in-try-catch'}}>
+
+```tsx
+export default async function Page({params}) {
+  try {
+    const {id} = await params;
+    const product = await getProduct(id);
+    if (!product) redirect('/create-product');
+    return <ProductView product={product} />;
+  } catch (error) {
+    return <ErrorMessage />;
+  }
+}
+```
+
+</Quiz>
+
+---
+
+## References
+
+- [Server and Client Components](https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns)
+  — where the boundary belongs.
+- [Caching in Next.js](https://nextjs.org/docs/app/building-your-application/caching)
+  — the four caches and what invalidates each.
+- [Server Actions security](https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations#security)
+  — why every action needs its own checks.
+- [redirect()](https://nextjs.org/docs/app/api-reference/functions/redirect) —
+  the throwing behaviour, documented.
+- [Common Misconceptions](/knowledge-base/next-js/common-misconceptions) — the
+  companion page on what people believe that is not true.

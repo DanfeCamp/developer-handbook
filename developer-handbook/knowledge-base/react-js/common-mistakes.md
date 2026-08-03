@@ -1,9 +1,22 @@
 ---
 id: common-mistakes
 title: Common Mistakes
+description: The React mistakes that cost the most debugging time — stale closures, derived state, fetch races, reference identity — with the fix for each.
 ---
 
 # Common Mistakes
+
+Every mistake here is one that experienced React developers still make. They
+share a root cause: React's model is _declarative_, and most of these are what
+happens when imperative habits leak back in.
+
+:::tip Two rules that prevent most of them
+**Use the updater form** — `setCount(c => c + 1)` — whenever the next value
+depends on the current one. It is immune to both batching and stale closures.
+
+**Compute, don't store.** If a value can be derived from props or state, derive
+it during render. State that mirrors other state goes stale.
+:::
 
 ## State updates aren't immediate
 
@@ -252,9 +265,9 @@ export default function Counter() {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    const intervalId = setInterval(() =>{
+    const intervalId = setInterval(() => {
       setCount(count + 1);
-    }, [1000]);
+    }, 1000);
 
     return () => clearInterval(intervalId);
   }, []);
@@ -296,7 +309,7 @@ export default function Post() {
       .then((data) => setPost(data));
   }, [id]);
 
-  return <button onClick={() => setId(Math.floor(Math.random * 100))}>Next Post</button>
+  return <button onClick={() => setId(Math.floor(Math.random() * 100))}>Next Post</button>
 };
 ```
 
@@ -334,8 +347,167 @@ export default function Post() {
     return () => controller.abort();
   }, [id]);
 
-  return <button onClick={() => setId(Math.floor(Math.random * 100))} disabled={isLoading}>Next Post</button>
+  return <button onClick={() => setId(Math.floor(Math.random() * 100))} disabled={isLoading}>Next Post</button>
 };
 ```
 
 In this approach, an `isLoading` state is added to manage the loading state of the fetch request. The `isLoading` state is set to `true` when the fetch request starts and is reset to `false` when the fetch request completes or fails. The fetch button is disabled while the `isLoading` state is `true`, preventing multiple concurrent requests.
+
+:::note You probably should not be fetching in an Effect at all
+The code above is the correct way to fetch in an Effect — abort signal,
+loading state, error handling. But getting all of that right in every component
+is precisely why the ecosystem moved on.
+
+A **server-cache library** (TanStack Query, SWR) gives you deduplication,
+caching, revalidation, retries and race-condition handling for free. In a
+framework, fetch in a **Server Component** or a **loader** instead, so the
+request never reaches the browser at all.
+
+Reserve manual Effect fetching for genuinely one-off cases. See
+[State Management](/knowledge-base/react-js/state-management) and
+[Rendering & SSR](/knowledge-base/next-js/server-side-rendering).
+:::
+
+---
+
+## Check your understanding
+
+<Quiz
+question="Clicking the button increments the counter by 1, not 3. Why?"
+options={[
+{
+text: 'All three calls read the same `count` value from the current render, so each computes the same result',
+correct: true,
+why: 'count is a constant captured by this render. Every call passes the same number, and React batches them into one update with that value.',
+},
+{
+text: 'React batches the updates and discards all but the last',
+why: 'Batching is real, but the reason the result is wrong is that all three calls computed the same value — not that updates were discarded arbitrarily.',
+},
+{
+text: 'setCount is asynchronous, so the later calls run before the first finishes',
+why: 'There is no ordering race between them. The problem is the stale value each one reads.',
+},
+{
+text: 'The component needs to be wrapped in a transition',
+why: 'Transitions control update priority, not the value being computed.',
+},
+]}
+explanation={<>The fix is the updater form: <code>setCount(c =&gt; c + 1)</code> three times gives 3, because each receives the latest pending value rather than the one captured at render time.</>}
+reference={{label: "State updates aren't immediate", href: '/knowledge-base/react-js/common-mistakes#state-updates-arent-immediate'}}>
+
+```jsx
+const [count, setCount] = useState(0);
+
+function handleClick() {
+  setCount(count + 1);
+  setCount(count + 1);
+  setCount(count + 1);
+}
+```
+
+</Quiz>
+
+<Quiz
+question="A counter using setInterval inside a useEffect with an empty dependency array sticks at 1. What is the cleanest fix?"
+options={[
+{
+text: 'Use the updater form: setCount(prev => prev + 1)',
+correct: true,
+why: 'The interval callback closed over count from the first render, where it is 0, so it always sets 1. The updater form reads the latest value instead of the captured one.',
+},
+{
+text: 'Add count to the dependency array',
+why: 'It does work, but it tears down and recreates the interval on every tick — a needless churn, and the timing drifts.',
+},
+{
+text: 'Store the count in a ref instead of state',
+why: 'A ref does not trigger re-renders, so the displayed value would stop updating entirely.',
+},
+{
+text: 'Remove the cleanup function so the interval is not cleared',
+why: 'That leaks an interval on every mount and does not touch the stale value at all.',
+},
+]}
+explanation={<>Stale closures are the most common Effect bug. Any callback that outlives the render that created it — intervals, subscriptions, event listeners — captures that render's values.</>}
+reference={{label: 'Stale closure', href: '/knowledge-base/react-js/common-mistakes#stale-closure'}}
+/>
+
+<Quiz
+question="Which of these should be derived during render rather than stored in state?"
+type="multiple"
+options={[
+{text: 'The filtered list, computed from an items array and a search string', correct: true, why: 'Fully determined by other state. Storing it means two sources of truth that can disagree.'},
+{text: 'Whether a form is valid, computed from its field values', correct: true, why: 'A pure function of the fields. Storing it risks the flag and the fields diverging.'},
+{text: 'The total price, computed from cart line items', correct: true, why: 'Derivable, so deriving it cannot go stale.'},
+{text: 'Whether a modal is open', why: 'Not derivable from anything else — this is genuine UI state.'},
+{text: 'The text a user has typed into an input', why: 'User input is a source of truth in its own right; there is nothing to derive it from.'},
+]}
+explanation={<>The test is whether you could delete the value and recompute it from what remains. If you can, storing it only creates an opportunity for the copy to drift.</>}
+reference={{label: 'Deriving information from state', href: '/knowledge-base/react-js/common-mistakes#deriving-information-from-state'}}
+/>
+
+<Quiz
+question="A component fetches when a prop changes. Users clicking quickly sometimes see data from an earlier request. What fixes it?"
+options={[
+{
+text: 'Abort the previous request in the Effect cleanup with an AbortController — or use a server-cache library that handles it',
+correct: true,
+why: 'Without cancellation, a slow earlier request can resolve after a faster later one and overwrite the newer data. Cleanup runs before each re-run of the Effect, which is exactly the right moment to abort.',
+},
+{
+text: 'Wrap the setState calls in a transition',
+why: 'Transitions affect scheduling priority, not which response wins the race.',
+},
+{
+text: 'Debounce the prop change',
+why: 'It makes the race less likely without eliminating it. Two requests can still be in flight.',
+},
+{
+text: 'Move the fetch out of useEffect into the render body',
+why: 'Fetching during render breaks purity and would fire on every render — considerably worse.',
+},
+]}
+explanation={<>This is the canonical argument for TanStack Query or SWR: request deduplication, cancellation and last-write-wins are solved once in the library rather than in every component.</>}
+reference={{label: 'Fetching in useEffect', href: '/knowledge-base/react-js/common-mistakes#fetching-in-useeffect'}}
+/>
+
+<Quiz
+question="An Effect depends on an object prop and re-runs on every parent render, even when the object's contents are identical. Why?"
+options={[
+{
+text: 'Dependencies are compared by reference; the parent creates a new object literal each render, so the reference always differs',
+correct: true,
+why: 'React uses Object.is on dependencies. A fresh object literal is a new reference every time, however identical its contents.',
+},
+{
+text: 'Objects are not allowed in dependency arrays',
+why: 'They are allowed — they just compare by identity, which is the source of the surprise.',
+},
+{
+text: 'The Effect is missing a cleanup function',
+why: 'Cleanup affects what happens between runs, not how often the Effect runs.',
+},
+{
+text: 'React deep-compares objects and the contents must have changed',
+why: 'React does not deep-compare. That is precisely the problem.',
+},
+]}
+explanation={<>Depend on the primitive you actually need — <code>[product.id]</code> rather than <code>[product]</code> — or memoise the object at the point it is created.</>}
+reference={{label: 'Primitive vs non-primitive data', href: '/knowledge-base/react-js/common-mistakes#primitive-vs-non-primitive-data-for-state-management'}}
+/>
+
+---
+
+## References
+
+- [You Might Not Need an Effect](https://react.dev/learn/you-might-not-need-an-effect)
+  — derived state, event handling, and when an Effect is genuinely required.
+- [Synchronizing with Effects](https://react.dev/learn/synchronizing-with-effects)
+  — cleanup, dependencies and the mental model.
+- [Queueing a series of state updates](https://react.dev/learn/queueing-a-series-of-state-updates)
+  — batching and the updater form.
+- [Removing Effect dependencies](https://react.dev/learn/removing-effect-dependencies)
+  — reference identity in dependency arrays.
+- [TanStack Query](https://tanstack.com/query/latest) — the standard answer to
+  fetching in components.

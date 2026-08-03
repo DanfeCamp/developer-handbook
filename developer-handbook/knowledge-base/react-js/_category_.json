@@ -1,8 +1,0 @@
-{
-  "label": "React",
-  "position": 6,
-  "collapsed": true,
-  "customProps": {
-    "description": "Component design, state management, best practices and the mistakes teams make most often."
-  }
-}

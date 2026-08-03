@@ -160,27 +160,75 @@ This caching mechanism allows you to confidently fetch the same data in multiple
 
 In Next.js, both search parameters (query parameters) and dynamic routes are used to pass data through URLs, but they serve different purposes and are handled differently.
 
+:::warning `params` and `searchParams` are Promises
+As of **Next.js 16**, `params` and `searchParams` are asynchronous and must be
+awaited. Synchronous access — common in tutorials written for Next.js 14 and
+earlier — was removed and now throws at request time.
+:::
+
 ```jsx
-export default function ProductPage({ params, searchParams }) {
+export default async function ProductPage({ params, searchParams }) {
+  const { id } = await params;
+  const { color } = await searchParams;
+
   return (
     <div>
-      <p>Product ID: {params.id}</p>
-      <p>Product Color: {searchParams.color}</p>
+      <p>Product ID: {id}</p>
+      <p>Product Color: {color}</p>
     </div>
   );
 }
 ```
 
-In the example above, `ProductPage` receives both `params` and `searchParams` as props. These two types of parameters represent different ways to pass data through the URL.
+In the example above, `ProductPage` receives both `params` and `searchParams` as
+props. These two types of parameters represent different ways to pass data
+through the URL.
 
 **1. Dynamic Route (`params`):**
 
 - The dynamic route is defined using square brackets in the file name, such as `/product/[id]`. This creates a dynamic segment in the URL, for example, `/product/123`.
-- The `params` object contains the values of these dynamic segments. In this case, `params.id` would be `123`.
+- Awaiting `params` yields the values of these dynamic segments. In this case, `id` would be `123`.
 - Dynamic routes are typically used to uniquely identify a resource, such as a specific product, user, or post.
 
 **2. Search Parameter (`searchParams`):**
 
 - Search parameters (also known as query parameters) are included in the URL after a `?`, such as `/product/123?color=red`.
-- The `searchParams` object contains the key-value pairs from the query string. In this case, `searchParams.color` would be `red`.
+- Awaiting `searchParams` yields the key-value pairs from the query string. In this case, `color` would be `red`.
 - Search parameters are often used to filter or sort data, provide additional context, or pass non-essential data.
+
+Note the practical difference: because `searchParams` can change without
+changing the route, reading it makes a page dynamic. A page that only reads
+`params` can still be statically generated via `generateStaticParams`.
+
+<Quiz
+question="Why does this Next.js 16 page throw at request time even though the build succeeded?"
+options={[
+{
+text: 'params is a Promise and must be awaited',
+correct: true,
+why: 'Next.js 16 removed synchronous access to params, searchParams, cookies(), headers() and draftMode().',
+},
+{
+text: 'The component is missing the "use client" directive',
+why: 'Reading params does not require client rendering — Server Components receive it directly.',
+},
+{
+text: 'Dynamic routes require generateStaticParams',
+why: 'generateStaticParams is only needed to pre-render dynamic routes at build time; it is optional.',
+},
+{
+text: 'Server Components cannot be async',
+why: 'The opposite — Server Components are allowed to be async, which is how they fetch data directly.',
+},
+]}
+explanation={<>The build only type-checks and compiles; the invalid access is not exercised until a request hits the route. This is why the upgrade guide recommends running the codemod and then testing each route.</>}
+
+>
+
+```jsx
+export default function ProductPage({ params }) {
+  return <p>Product ID: {params.id}</p>;
+}
+```
+
+</Quiz>

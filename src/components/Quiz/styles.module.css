@@ -1,0 +1,199 @@
+.quiz {
+  margin: 1.75rem 0;
+  padding: 1.25rem 1.25rem 1rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-global-radius);
+  background: var(--ifm-background-surface-color);
+}
+
+.fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/* A disabled fieldset greys its contents out; the quiz only disables inputs to
+   lock the answer in, so restore full contrast for the revealed feedback. */
+.fieldset:disabled {
+  opacity: 1;
+}
+
+.legend {
+  display: block;
+  padding: 0;
+}
+
+.badge {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  background: var(--ifm-color-primary);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.question {
+  display: block;
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.body {
+  margin-top: 0.85rem;
+}
+
+.body :global(pre) {
+  margin-bottom: 0;
+}
+
+.options {
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.options > li + li {
+  margin-top: 0.5rem;
+}
+
+.option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-global-radius);
+  background: var(--ifm-background-color);
+  cursor: pointer;
+  transition:
+    border-color var(--ifm-transition-fast),
+    background-color var(--ifm-transition-fast);
+}
+
+.option:hover {
+  border-color: var(--ifm-color-primary);
+}
+
+.fieldset:disabled .option {
+  cursor: default;
+}
+
+.fieldset:disabled .option:hover {
+  border-color: var(--ifm-color-emphasis-300);
+}
+
+.optionChecked {
+  border-color: var(--ifm-color-primary);
+}
+
+.optionCorrect {
+  border-color: var(--ifm-color-success);
+  background: var(--ifm-color-success-contrast-background);
+}
+
+.optionIncorrect {
+  border-color: var(--ifm-color-danger);
+  background: var(--ifm-color-danger-contrast-background);
+}
+
+.input {
+  margin: 0.25rem 0 0;
+  flex-shrink: 0;
+  accent-color: var(--ifm-color-primary);
+}
+
+.optionText {
+  flex: 1;
+  line-height: 1.5;
+}
+
+.mark {
+  flex-shrink: 0;
+  font-weight: 700;
+}
+
+.optionCorrect .mark {
+  color: var(--ifm-color-success-darkest);
+}
+
+.optionIncorrect .mark {
+  color: var(--ifm-color-danger-darkest);
+}
+
+.why {
+  margin: 0.35rem 0 0 2.1rem;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.actions {
+  margin-top: 1rem;
+}
+
+.button {
+  padding: 0.45rem 1.1rem;
+  border: 1px solid var(--ifm-color-primary);
+  border-radius: var(--ifm-global-radius);
+  background: var(--ifm-color-primary);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color var(--ifm-transition-fast),
+    opacity var(--ifm-transition-fast);
+}
+
+.button:hover:not(:disabled) {
+  background: var(--ifm-color-primary-dark);
+  border-color: var(--ifm-color-primary-dark);
+}
+
+.button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.result {
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  border-left: 3px solid;
+  border-radius: var(--ifm-global-radius);
+}
+
+.resultCorrect {
+  border-color: var(--ifm-color-success);
+  background: var(--ifm-color-success-contrast-background);
+}
+
+.resultIncorrect {
+  border-color: var(--ifm-color-danger);
+  background: var(--ifm-color-danger-contrast-background);
+}
+
+.resultTitle {
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+.explanation > :last-child,
+.reference:last-child {
+  margin-bottom: 0;
+}
+
+.reference {
+  margin-top: 0.5rem;
+  font-size: 0.88rem;
+}
+
+@media (max-width: 576px) {
+  .quiz {
+    padding: 1rem 0.9rem 0.85rem;
+  }
+}

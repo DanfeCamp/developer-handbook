@@ -1,8 +1,0 @@
-{
-  "label": "npm",
-  "position": 3,
-  "collapsed": true,
-  "customProps": {
-    "description": "The Node.js package manager: key concepts, commands, best practices and pitfalls."
-  }
-}
